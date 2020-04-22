@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "esModuleInterop": false,
+    "noEmitOnError": true,
+    "noImplicitReturns": true,
+    "strict": true,
+    "declaration": true,
+    "jsx": "react",
+    "lib": [
+      "es2015",
+      "es2015.promise",
+      "dom"
+    ],
+    "importHelpers": true
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx"
+  ]
+}
