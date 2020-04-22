@@ -8,10 +8,12 @@ html, body {
   padding: 0;
   margin: 0;
   font-family: Ubuntu, sans-serif;
+  min-width: 320px;
 }
 
 .timer-container {
-  padding: 40px;
+  padding: 10px;
+  text-align: center;
   display: flex;
   align-content: center;
   justify-content: center;
@@ -25,10 +27,11 @@ html, body {
 }
 
 .timer-input__time {
-  font-size: 60px;
+  font-size: 40px;
   font-weight: bold;
   padding: 10px;
-  text-align: right;
+  text-align: center;
+  width: 100%;
 }
 
 .template-buttons, .controls {
@@ -39,7 +42,18 @@ html, body {
 }
 
 .template-button {
-  margin: 0 10px;
+  margin: 5px 10px;
+}
+
+@media (min-width: 500px) {
+  .timer-container {
+    padding: 40px;
+  }
+
+  .timer-input__time {
+    font-size: 60px;
+    text-align: right;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
