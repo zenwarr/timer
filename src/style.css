@@ -30,6 +30,10 @@ html, body {
   flex-direction: column;
 }
 
+.timer-input {
+  text-align: center;
+}
+
 .timer-input__label {
   text-align: center;
   font-size: 18px;
@@ -37,6 +41,8 @@ html, body {
 }
 
 .timer-input__time {
+  display: inline-block;
+  max-width: 500px;
   font-size: 40px;
   font-weight: bold;
   padding: 10px;
@@ -83,8 +89,8 @@ button:focus {
   }
 
   .timer-input__time {
-    font-size: 60px;
-    text-align: right;
+    font-size: 65px;
+    text-align: center;
   }
 }
 

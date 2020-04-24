@@ -9,7 +9,7 @@ function getInput() {
 
 function scheduleNextStep(cb: () => void) {
   if (document.hidden) {
-    setTimeout(cb, 500);
+    setTimeout(cb, 100);
   } else {
     requestAnimationFrame(cb);
   }
