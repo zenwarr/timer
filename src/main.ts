@@ -1,11 +1,176 @@
-function getInput() {
-  let input = document.getElementById("timer-input");
-  if (!input || !(input instanceof HTMLInputElement)) {
-    return undefined;
+enum TimerAction {
+  Continue,
+  Stopped,
+  Paused,
+  Elapsed
+}
+
+class TimeCounter {
+  public constructor(msLeft: number) {
+    this.msLeft = msLeft;
   }
 
-  return input;
+  public calculatedEnd = 0;
+  public msLeft = 0;
+  public running = false;
+  public stopRequested = false;
+  public pauseRequested = false;
+  public lastDuration = DEFAULT_DURATION;
+
+  public stop(): void {
+    this.stopRequested = true;
+    this.msLeft = 0;
+    this.setDuration(this.lastDuration);
+  }
+
+  private reschedule() {
+    this.calculatedEnd = performance.now() + this.msLeft;
+  }
+
+  public toggle(): TimerAction {
+    if (this.running) {
+      this.pauseRequested = true;
+      return TimerAction.Paused;
+    } else {
+      this.running = true;
+      this.pauseRequested = false;
+      this.stopRequested = false;
+      this.reschedule();
+      return TimerAction.Continue;
+    }
+  }
+
+  public tick(): TimerAction {
+    let left = Math.max(this.calculatedEnd - performance.now(), 0);
+
+    if (left <= 0) {
+      this.running = false;
+      this.msLeft = 0;
+      return TimerAction.Elapsed;
+    } else if (this.stopRequested) {
+      this.running = false;
+      return TimerAction.Stopped;
+    } else if (this.pauseRequested) {
+      this.running = false;
+      this.msLeft = left;
+      return TimerAction.Paused;
+    } else {
+      this.msLeft = left;
+      return TimerAction.Continue;
+    }
+  }
+
+  public get canStop() {
+    return (this.running || this.msLeft > 0) && this.msLeft !== this.lastDuration;
+  }
+
+  public setDuration(duration: number) {
+    this.msLeft = duration;
+    this.lastDuration = duration;
+    this.reschedule();
+  }
 }
+
+
+const DEFAULT_DURATION = 1000 * 60 * 10;
+let counter = new TimeCounter(DEFAULT_DURATION);
+
+
+class TimerUI {
+  public constructor() {
+    this._input = document.querySelector<HTMLInputElement>("#timer-input");
+
+    this.updateTimeDisplay();
+
+    document.body.addEventListener("click", e => {
+      let target = e.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+
+      if (target.classList.contains("template-button")) {
+        let template = target.dataset.template;
+        if (template) {
+          this.onChangeTemplate(template);
+        }
+      } else if (target.classList.contains("stop")) {
+        this.onStop();
+      } else if (target.classList.contains("toggle")) {
+        this.onToggle();
+      }
+    });
+  }
+
+  public onStop() {
+    counter.stop();
+    this.updateTimeDisplay();
+  }
+
+  public onToggle() {
+    let action = counter.toggle();
+    if (action === TimerAction.Continue) {
+      scheduleNextStep(this.onTimerIteration.bind(this));
+    }
+  }
+
+  public onChangeTemplate(template: string) {
+    counter.setDuration(parseTemplate(template));
+    this.updateTimeDisplay();
+  }
+
+  private onTimerIteration() {
+    let action = counter.tick();
+
+    this.updateTimeDisplay();
+
+    switch (action) {
+      case TimerAction.Elapsed:
+        beep();
+        break;
+
+      case TimerAction.Continue:
+        scheduleNextStep(this.onTimerIteration.bind(this));
+    }
+  }
+
+  private updateTimeDisplay() {
+    let msLeft = counter.msLeft;
+
+    if (this._input) {
+      this._input.textContent = formatTime(msLeft);
+    }
+
+    if (msLeft > 0) {
+      document.title = `${ formatTime(msLeft, false) } - Timer`;
+    } else {
+      document.title = "Timer";
+    }
+
+    this.updateState();
+  }
+
+  private updateState() {
+    let toggle = document.querySelector(".toggle");
+    if (toggle) {
+      toggle.textContent = counter.running ? "Pause" : "Start";
+    }
+
+    let stop = document.querySelector<HTMLButtonElement>(".stop");
+    if (stop) {
+      stop.disabled = !counter.canStop;
+    }
+
+    if (this._input) {
+      this._input.contentEditable = counter.running ? "false" : "true";
+    }
+  }
+
+  private readonly _input: HTMLDivElement | null;
+}
+
+
+let timerUI = new TimerUI();
+
 
 function scheduleNextStep(cb: () => void) {
   if (document.hidden) {
@@ -15,36 +180,6 @@ function scheduleNextStep(cb: () => void) {
   }
 }
 
-function startTimer() {
-  let input = getInput();
-  if (input) {
-    input.readOnly = true;
-  }
-
-  timeStart = performance.now();
-  scheduleNextStep(timerIteration);
-}
-
-function stopTimer() {
-  let input = getInput();
-  if (input) {
-    input.readOnly = false;
-    input.value = formatTime(0);
-  }
-}
-
-function updateTimeDisplay(msLeft: number) {
-  let input = getInput();
-  if (input) {
-    input.value = formatTime(msLeft);
-  }
-
-  if (msLeft > 0) {
-    document.title = `${ formatTime(msLeft, false) } - Timer`;
-  } else {
-    document.title = "Timer";
-  }
-}
 
 function formatTime(ms: number, showMs = true): string {
   let hours = ("" + Math.floor(ms / (1000 * 60 * 60))).padStart(2, "0");
@@ -59,23 +194,6 @@ function formatTime(ms: number, showMs = true): string {
   }
 }
 
-
-let timerDuration = 1000 * 60;
-let timeStart = performance.now();
-
-function timerIteration() {
-  let left = timerDuration - (performance.now() - timeStart);
-  if (left <= 0) {
-    updateTimeDisplay(0);
-    beep();
-    stopTimer();
-  } else {
-    updateTimeDisplay(left);
-    scheduleNextStep(timerIteration);
-  }
-}
-
-updateTimeDisplay(timerDuration);
 
 function parseTemplate(template: string): number {
   let unit = template.slice(-1);
@@ -102,11 +220,6 @@ function parseTemplate(template: string): number {
   return value * multiplier;
 }
 
-function changeToTemplate(template: string) {
-  stopTimer();
-  timerDuration = parseTemplate(template);
-  updateTimeDisplay(timerDuration);
-}
 
 function playSound(audio: HTMLAudioElement) {
   return new Promise<void>((resolve, reject) => {
@@ -124,6 +237,7 @@ function playSound(audio: HTMLAudioElement) {
   });
 }
 
+
 async function beep(times: number = 2) {
   let audio = document.getElementById("beep-sound");
   if (audio && audio instanceof HTMLAudioElement) {
@@ -132,19 +246,3 @@ async function beep(times: number = 2) {
     }
   }
 }
-
-document.body.addEventListener("click", e => {
-  let target = e.target;
-  if (!(target instanceof HTMLElement)) {
-    return;
-  }
-
-  if (target.classList.contains("template-button")) {
-    let template = target.dataset.template;
-    if (template) {
-      changeToTemplate(template);
-    }
-  } else if (target.classList.contains("start")) {
-    startTimer();
-  }
-});

@@ -48,6 +48,13 @@ html, body {
   padding: 10px;
   text-align: center;
   width: 100%;
+  background: var(--control-background-color);
+  border: 1px solid var(--control-border-color);
+  color: var(--text-color);
+}
+
+.timer-input__time::selection {
+  background-color: var(--control-border-color);
 }
 
 .template-buttons, .controls {
@@ -57,18 +64,12 @@ html, body {
   justify-content: center;
 }
 
-.template-button {
+.template-buttons__button {
   margin: 5px 10px;
 }
 
-input {
-  background: var(--control-background-color);
-  border: 1px solid var(--control-border-color);
-  color: var(--text-color);
-}
-
-input::selection {
-  background-color: var(--control-border-color);
+.controls__button {
+  margin: 5px 10px;
 }
 
 button {
@@ -76,6 +77,10 @@ button {
   border: 1px solid var(--control-border-color);
   padding: 10px 15px;
   color: var(--text-color);
+}
+
+button:disabled {
+  opacity: 0.4;
 }
 
 button:focus {
