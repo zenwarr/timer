@@ -66,6 +66,10 @@ class TimeCounter {
     return (this.running || this.msLeft > 0) && this.msLeft !== this.lastDuration;
   }
 
+  public get canToggle() {
+    return this.running || this.msLeft > 0;
+  }
+
   public setDuration(duration: number) {
     this.msLeft = duration;
     this.lastDuration = duration;
@@ -172,9 +176,10 @@ class TimerUI {
   }
 
   private updateState() {
-    let toggle = document.querySelector(".toggle");
+    let toggle = document.querySelector<HTMLButtonElement>(".toggle");
     if (toggle) {
       toggle.textContent = counter.running ? "Pause" : "Start";
+      toggle.disabled = !counter.canToggle;
     }
 
     let stop = document.querySelector<HTMLButtonElement>(".stop");
