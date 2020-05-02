@@ -1,5 +1,3 @@
-import set = Reflect.set;
-
 enum TimerAction {
   Continue,
   Stopped,
@@ -197,7 +195,7 @@ class TimerUI {
 }
 
 
-let timerUI = new TimerUI();
+new TimerUI();
 
 
 function scheduleNextStep(cb: () => void) {

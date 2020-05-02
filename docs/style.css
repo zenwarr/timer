@@ -53,6 +53,11 @@ html, body {
   color: var(--text-color);
 }
 
+.timer-input__time--invalid {
+  box-shadow: 0px 1px 16px 0px red;
+  border-color: red;
+}
+
 .timer-input__time::selection {
   background-color: var(--control-border-color);
 }
