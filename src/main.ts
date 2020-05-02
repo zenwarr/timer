@@ -1,3 +1,5 @@
+import set = Reflect.set;
+
 enum TimerAction {
   Continue,
   Stopped,
@@ -79,6 +81,11 @@ let counter = new TimeCounter(DEFAULT_DURATION);
 class TimerUI {
   public constructor() {
     this._input = document.querySelector<HTMLInputElement>("#timer-input");
+    if (this._input) {
+      this._input.addEventListener("input", this.onInputChange.bind(this));
+    }
+
+    window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
 
     this.updateTimeDisplay();
 
@@ -99,6 +106,19 @@ class TimerUI {
         this.onToggle();
       }
     });
+  }
+
+  private onBeforeUnload(e: Event) {
+    if (counter.canStop) {
+      e.preventDefault();
+    }
+  }
+
+  private onInputChange(e: Event) {
+    let newValue = (e.target as HTMLDivElement).textContent || "";
+    let oldValue = this._previousInputValue;
+
+    this._previousInputValue = newValue;
   }
 
   public onStop() {
@@ -137,7 +157,9 @@ class TimerUI {
     let msLeft = counter.msLeft;
 
     if (this._input) {
+      let newValue = formatTime(msLeft);
       this._input.textContent = formatTime(msLeft);
+      this._previousInputValue = newValue;
     }
 
     if (msLeft > 0) {
@@ -166,6 +188,7 @@ class TimerUI {
   }
 
   private readonly _input: HTMLDivElement | null;
+  private _previousInputValue: string | undefined;
 }
 
 
