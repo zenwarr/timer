@@ -182,9 +182,9 @@ class TimerUI {
       stop.disabled = !counter.canStop;
     }
 
-    if (this._input) {
-      this._input.contentEditable = counter.running ? "false" : "true";
-    }
+    // if (this._input) {
+    //   this._input.contentEditable = counter.running ? "false" : "true";
+    // }
   }
 
   private readonly _input: HTMLDivElement | null;
