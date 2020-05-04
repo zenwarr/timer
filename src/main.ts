@@ -82,10 +82,9 @@ let counter = new TimeCounter(DEFAULT_DURATION);
 
 class TimerUI {
   public constructor() {
-    this._input = document.querySelector<HTMLInputElement>("#timer-input");
-    if (this._input) {
-      this._input.addEventListener("input", this.onInputChange.bind(this));
-    }
+    this._input = document.querySelector<HTMLInputElement>("#timer-input")!;
+    this._input.addEventListener("blur", this.applyInputValue.bind(this));
+    this._input.addEventListener("input", this.onInputChange.bind(this));
 
     window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
 
@@ -117,10 +116,28 @@ class TimerUI {
   }
 
   private onInputChange(e: Event) {
-    let newValue = (e.target as HTMLDivElement).textContent || "";
-    let oldValue = this._previousInputValue;
+    this._inputDirty = true;
+  }
 
-    this._previousInputValue = newValue;
+  public applyInputValue() {
+    if (!this._inputDirty) {
+      return;
+    }
+
+    let { parsed, success } = parseInput(this._input.value);
+    this._setValidationStatus(success);
+    this._inputDirty = false;
+
+    if (parsed != null) {
+      counter.setDuration(parsed);
+    }
+  }
+
+  private _setValidationStatus(success: boolean) {
+    if (success !== this._inputValid) {
+      this._inputValid = success;
+      this._input.classList.toggle("timer-input__time--invalid", !success);
+    }
   }
 
   public onStop() {
@@ -129,6 +146,10 @@ class TimerUI {
   }
 
   public onToggle() {
+    if (!this._inputValid) {
+      return;
+    }
+
     let action = counter.toggle();
     if (action === TimerAction.Continue) {
       scheduleNextStep(this.onTimerIteration.bind(this));
@@ -158,11 +179,9 @@ class TimerUI {
   private updateTimeDisplay() {
     let msLeft = counter.msLeft;
 
-    if (this._input) {
-      let newValue = formatTime(msLeft);
-      this._input.textContent = formatTime(msLeft);
-      this._previousInputValue = newValue;
-    }
+    this._input.value = formatTime(msLeft);
+    this._inputDirty = false;
+    this._setValidationStatus(true);
 
     if (msLeft > 0) {
       document.title = `${ formatTime(msLeft, false) } - Timer`;
@@ -185,13 +204,12 @@ class TimerUI {
       stop.disabled = !counter.canStop;
     }
 
-    // if (this._input) {
-    //   this._input.contentEditable = counter.running ? "false" : "true";
-    // }
+    this._input.readOnly = counter.running;
   }
 
-  private readonly _input: HTMLDivElement | null;
-  private _previousInputValue: string | undefined;
+  private readonly _input: HTMLInputElement;
+  private _inputDirty = false;
+  private _inputValid = true;
 }
 
 
@@ -271,4 +289,54 @@ async function beep(times: number = 2) {
       await playSound(audio);
     }
   }
+}
+
+
+function parseInput(value: string): { parsed: number, success: true } | { parsed: undefined, success: false } {
+  let qsSep = value.indexOf(".");
+  if (qsSep < 0) {
+    return { parsed: undefined, success: false };
+  }
+
+  let qsText = value.slice(qsSep + 1);
+  if (qsText.length !== 3) {
+    return { parsed: undefined, success: false };
+  }
+
+  let qs = parseInteger(qsText);
+  if (qs == null) {
+    return { parsed: undefined, success: false };
+  }
+
+  let textParts = value.slice(0, qsSep).split(":");
+  if (textParts.some(x => x.length > 2)) {
+    return { parsed: undefined, success: false };
+  }
+
+  let parts = textParts
+      .map(x => parseInteger(x))
+      .reverse();
+  if (parts.some(x => x == null || x >= 60)) {
+    return { parsed: undefined, success: false };
+  }
+
+  if (parts.length > 3 || parts.length < 1) {
+    return { parsed: undefined, success: false };
+  }
+
+  let checkedParts = parts as number[];
+
+  let result = qs + checkedParts[0] * 1000;
+  if (checkedParts.length >= 2) {
+    result += checkedParts[1] * 1000 * 60;
+  }
+  if (checkedParts.length >= 3) {
+    result += checkedParts[2] * 1000 * 60 * 60;
+  }
+
+  return { parsed: result, success: true };
+}
+
+function parseInteger(input: string): number | undefined {
+  return !/^[0-9]+$/.test(input) ? undefined : +input;
 }
