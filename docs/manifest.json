@@ -8,22 +8,22 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/images/icon64.png",
+      "src": "/timer/images/icon64.png",
       "type": "image/png",
       "sizes": "64x64"
     },
     {
-      "src": "/images/icon128.png",
+      "src": "/timer/images/icon128.png",
       "type": "image/png",
       "sizes": "128x128"
     },
     {
-      "src": "/images/icon192.png",
+      "src": "/timer/images/icon192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/images/icon512.png",
+      "src": "/timer/images/icon512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
