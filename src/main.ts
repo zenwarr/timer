@@ -130,6 +130,7 @@ class TimerUI {
 
     if (parsed != null) {
       counter.setDuration(parsed);
+      this.updateState();
     }
   }
 
