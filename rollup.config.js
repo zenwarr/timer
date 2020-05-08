@@ -24,6 +24,9 @@ export default [
   },
   {
     input: 'src/style.css',
+    output: {
+      dir: "docs"
+    },
     plugins: [
       postcss({
         extract: "style.css",
