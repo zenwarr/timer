@@ -71,6 +71,7 @@ html, body {
 
 .template-buttons__button {
   margin: 5px 10px;
+  width: 110px;
 }
 
 .controls__button {
