@@ -14,7 +14,7 @@ export default [
     },
     plugins: [
       typescript({
-        tsconfig: "tsconfig.json"
+        tsconfig: "./src/tsconfig.json"
       }),
       terser(),
       html({

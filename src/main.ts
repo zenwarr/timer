@@ -218,11 +218,7 @@ new TimerUI();
 
 
 function scheduleNextStep(cb: () => void) {
-  if (document.hidden) {
-    setTimeout(cb, 100);
-  } else {
-    requestAnimationFrame(cb);
-  }
+  setTimeout(cb, 10);
 }
 
 
@@ -230,7 +226,7 @@ function formatTime(ms: number, showMs = true): string {
   let hours = ("" + Math.floor(ms / (1000 * 60 * 60))).padStart(2, "0");
   let mins = ("" + Math.floor(ms / (1000 * 60) % 60)).padStart(2, "0");
   let sec = ("" + Math.floor(ms / 1000) % 60).padStart(2, "0");
-  let sc = ("" + Math.floor(ms % 1000)).padStart(3, "0");
+  let sc = ("" + Math.floor((ms % 1000) / 10)).padStart(2, "0");
 
   if (showMs) {
     return `${ hours }:${ mins }:${ sec }.${ sc }`;
@@ -300,7 +296,7 @@ function parseInput(value: string): { parsed: number, success: true } | { parsed
   }
 
   let qsText = value.slice(qsSep + 1);
-  if (qsText.length !== 3) {
+  if (qsText.length !== 2) {
     return { parsed: undefined, success: false };
   }
 
@@ -315,8 +311,8 @@ function parseInput(value: string): { parsed: number, success: true } | { parsed
   }
 
   let parts = textParts
-      .map(x => parseInteger(x))
-      .reverse();
+  .map(x => parseInteger(x))
+  .reverse();
   if (parts.some(x => x == null || x >= 60)) {
     return { parsed: undefined, success: false };
   }
@@ -327,7 +323,7 @@ function parseInput(value: string): { parsed: number, success: true } | { parsed
 
   let checkedParts = parts as number[];
 
-  let result = qs + checkedParts[0] * 1000;
+  let result = qs * 10 + checkedParts[0] * 1000;
   if (checkedParts.length >= 2) {
     result += checkedParts[1] * 1000 * 60;
   }
