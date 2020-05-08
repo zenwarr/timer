@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono:wght@400&display=swap');
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -52,7 +52,7 @@ html, body {
   background: var(--control-background-color);
   border: 1px solid var(--control-border-color);
   color: var(--text-color);
-  font-family: Ubuntu Mono, monospace;
+  font-family: Share Tech Mono, monospace;
 }
 
 .timer-input__time--invalid {
