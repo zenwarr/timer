@@ -92,6 +92,10 @@ button:focus {
   outline-offset: -5px;
 }
 
+button::-moz-focus-inner {
+  border: 0;
+}
+
 @media (min-width: 500px) {
   .timer-container {
     padding: 40px;
