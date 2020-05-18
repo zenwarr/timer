@@ -89,7 +89,7 @@ button:disabled {
 
 button:focus {
   outline: 1px dotted var(--control-focus-color);
-  outline-offset: -1px;
+  outline-offset: -5px;
 }
 
 @media (min-width: 500px) {
