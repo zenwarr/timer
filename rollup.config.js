@@ -10,7 +10,7 @@ export default [
     input: 'src/main.ts',
     output: {
       dir: 'docs',
-      format: 'iife'
+      format: 'cjs'
     },
     plugins: [
       typescript({

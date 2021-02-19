@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "sourceMap": true,
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "target": "ESNext",
     "esModuleInterop": false,
@@ -14,8 +14,7 @@
       "es2015",
       "es2015.promise",
       "dom"
-    ],
-    "importHelpers": true
+    ]
   },
   "include": [
     "./**/*.ts",
