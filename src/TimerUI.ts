@@ -113,7 +113,6 @@ export class TimerUI {
 
 
   private updateTimeDisplay() {
-    console.log("updating time display", this.counter.msLeft);
     let msLeft = this.counter.msLeft;
 
     this.input.value = formatTime(msLeft);
