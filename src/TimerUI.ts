@@ -8,6 +8,12 @@ export class TimerUI {
   public constructor() {
     this.counter = new TimeCounter(DEFAULT_DURATION);
 
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    reducedMotion.addEventListener("change", value => {
+      this.reducedMotion = value.matches;
+    })
+    this.reducedMotion = reducedMotion.matches;
+
     this.input = document.querySelector<HTMLInputElement>("#timer-input")!;
     this.input.addEventListener("blur", this.applyInputValue.bind(this));
     this.input.addEventListener("input", this.onInputChange.bind(this));
@@ -115,7 +121,7 @@ export class TimerUI {
   private updateTimeDisplay() {
     let msLeft = this.counter.msLeft;
 
-    this.input.value = formatTime(msLeft);
+    this.input.value = formatTime(this.reducedMotion ? Math.ceil(msLeft / 1000) * 1000 : msLeft);
     this.isInputDirty = false;
     this.setValidationStatus(true);
 
@@ -147,6 +153,7 @@ export class TimerUI {
 
   private readonly input: HTMLInputElement;
   private readonly counter: TimeCounter;
+  private reducedMotion: boolean;
   private isInputDirty = false;
   private isInputValid = true;
 }
