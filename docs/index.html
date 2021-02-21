@@ -13,7 +13,7 @@
 <body>
 <div class="timer-container">
   <label class="timer-container__content timer-input" aria-label="Time left">
-    <input id="timer-input" class="timer-input__time" autocomplete="off" />
+    <input id="timer-input" class="timer-input__time" autocomplete="off"/>
   </label>
 
   <div class="controls">
@@ -50,6 +50,17 @@
     <button class="template-buttons__button template-button" data-template="1h">
       1 hour
     </button>
+  </div>
+
+  <div class="theme-picker">
+    <label class="theme-picker__themes">
+      <select name="color_theme" class="theme-picker__select">
+        <option value="auto">Auto</option>
+        <option value="dark" data-is-dark="true">Arc Dark</option>
+        <option value="light" data-is-dark="false">Light</option>
+        <option value="solarized" data-is-dark="false">Solarized</option>
+      </select>
+    </label>
   </div>
 
   <script src="main.js"></script>

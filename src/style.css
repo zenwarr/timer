@@ -5,14 +5,6 @@
   box-sizing: border-box;
 }
 
-html {
-  --background-color: #d8d8d9;
-  --text-color: black;
-  --control-background-color: #f0f0f0;
-  --control-border-color: #929292;
-  --control-focus-color: #32bcff;
-}
-
 html, body {
   padding: 0;
   margin: 0;
@@ -61,7 +53,7 @@ html, body {
 }
 
 .timer-input__time::selection {
-  background-color: var(--control-border-color);
+  background-color: var(--control-selection-color);
 }
 
 .template-buttons, .controls {
@@ -96,6 +88,23 @@ button::-moz-focus-inner {
   border: 0;
 }
 
+.theme-picker {
+  position: absolute;
+  right: 40px;
+  top: 40px;
+  text-align: center;
+  text-align-last: center;
+}
+
+.theme-picker__select {
+  background: var(--control-background-color);
+  border: 1px solid var(--control-border-color);
+  appearance: none;
+  padding: 6px 10px;
+  color: var(--text-color);
+  text-align: center;
+}
+
 @media (min-width: 500px) {
   .timer-container {
     padding: 40px;
@@ -107,12 +116,46 @@ button::-moz-focus-inner {
   }
 }
 
+@media (max-width: 790px) {
+  .theme-picker {
+    position: static;
+  }
+}
+
+html, html.theme--light {
+  --background-color: #d8d8d9;
+  --text-color: black;
+  --control-background-color: #f0f0f0;
+  --control-border-color: #929292;
+  --control-selection-color: #929292;
+  --control-focus-color: #32bcff;
+}
+
+html.theme--dark {
+  --background-color: #383c4a;
+  --text-color: #9e9e9e;
+  --control-background-color: #404552;
+  --control-border-color: black;
+  --control-selection-color: black;
+  --control-focus-color: #929292;
+}
+
+html.theme--solarized {
+  --background-color: #eee8d5;
+  --text-color: #657b83;
+  --control-background-color: #eee8d5;
+  --control-border-color: #657b83;
+  --control-selection-color: #7dc4be;
+  --control-focus-color: #2aa198;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     --background-color: #383c4a;
     --text-color: #9e9e9e;
     --control-background-color: #404552;
     --control-border-color: black;
+    --control-selection-color: black;
     --control-focus-color: #929292;
   }
 }
