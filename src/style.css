@@ -149,6 +149,15 @@ html.theme--solarized {
   --control-focus-color: #2aa198;
 }
 
+html.theme--lucky {
+  --background-color: #cbcbcc;
+  --text-color: #1e1e1e;
+  --control-background-color: #c1c1c2;
+  --control-border-color: #6b6b6b;
+  --control-selection-color: #62798f;
+  --control-focus-color: #62798f;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     --background-color: #383c4a;
