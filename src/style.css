@@ -158,6 +158,15 @@ html.theme--lucky {
   --control-focus-color: #62798f;
 }
 
+html.theme--materia-dark {
+  --background-color: #212121;
+  --text-color: #d3dae3;
+  --control-background-color: #303030;
+  --control-border-color: #000;
+  --control-selection-color: #000;
+  --control-focus-color: #338dd6;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     --background-color: #383c4a;
