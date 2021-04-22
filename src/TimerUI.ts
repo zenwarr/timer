@@ -18,7 +18,7 @@ export class TimerUI {
     this.input.addEventListener("blur", this.applyInputValue.bind(this));
     this.input.addEventListener("input", this.onInputChange.bind(this));
 
-    window.addEventListener("beforeunload", this.onBeforeUnload.bind(this));
+    window.onbeforeunload = this.onBeforeUnload.bind(this);
 
     this.updateTimeDisplay();
 
@@ -45,6 +45,9 @@ export class TimerUI {
   private onBeforeUnload(e: Event) {
     if (this.counter.canStop) {
       e.preventDefault();
+      return "Please don't"
+    } else {
+      return undefined;
     }
   }
 
