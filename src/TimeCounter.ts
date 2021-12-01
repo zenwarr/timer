@@ -1,3 +1,10 @@
+export interface NotifyPoint {
+  msLeft: number;
+  text: string;
+  triggered: boolean;
+}
+
+
 export class TimeCounter {
   public constructor(msLeft: number) {
     this.msLeft = msLeft;
@@ -11,6 +18,16 @@ export class TimeCounter {
   public stopRequested = false;
   public pauseRequested = false;
   public lastDuration: number;
+  protected notifyPoints: NotifyPoint[] = [];
+
+
+  public addNotifyPoint(msLeft: number, text: string): void {
+    this.notifyPoints.push({
+      msLeft: msLeft,
+      text: text,
+      triggered: false
+    });
+  }
 
 
   public stop(): void {
@@ -22,6 +39,9 @@ export class TimeCounter {
 
   private reschedule() {
     this.calculatedEnd = performance.now() + this.msLeft;
+    for (const point of this.notifyPoints) {
+      point.triggered = point.msLeft >= this.msLeft;
+    }
   }
 
 
@@ -39,23 +59,31 @@ export class TimeCounter {
   }
 
 
-  public tick(): TimerAction {
+  public tick(): [TimerAction, NotifyPoint[]] {
     let left = Math.max(this.calculatedEnd - performance.now(), 0);
+
+    const triggeredPoints: NotifyPoint[] = [];
+    for (const point of this.notifyPoints) {
+      if (left <= point.msLeft && !point.triggered) {
+        point.triggered = true;
+        triggeredPoints.push(point);
+      }
+    }
 
     if (left <= 0) {
       this.running = false;
       this.msLeft = 0;
-      return TimerAction.Elapsed;
+      return [TimerAction.Elapsed, triggeredPoints];
     } else if (this.stopRequested) {
       this.running = false;
-      return TimerAction.Stopped;
+      return [TimerAction.Stopped, triggeredPoints];
     } else if (this.pauseRequested) {
       this.running = false;
       this.msLeft = left;
-      return TimerAction.Paused;
+      return [TimerAction.Paused, triggeredPoints];
     } else {
       this.msLeft = left;
-      return TimerAction.Continue;
+      return [TimerAction.Continue, triggeredPoints];
     }
   }
 

@@ -7,6 +7,11 @@ export const DEFAULT_DURATION = 1000 * 60 * 10;
 export class TimerUI {
   public constructor() {
     this.counter = new TimeCounter(DEFAULT_DURATION);
+    this.counter.addNotifyPoint(1000 * 10, "10 seconds left");
+    this.counter.addNotifyPoint(1000 * 30, "30 seconds left");
+    this.counter.addNotifyPoint(1000 * 60, "1 minute left");
+    this.counter.addNotifyPoint(1000 * 60 * 5, "5 minutes left");
+    this.counter.addNotifyPoint(1000 * 60 * 10, "10 minutes left");
 
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     reducedMotion.addEventListener("change", value => {
@@ -106,7 +111,7 @@ export class TimerUI {
 
 
   private onTimerIteration() {
-    let action = this.counter.tick();
+    let [action, points] = this.counter.tick();
 
     this.updateTimeDisplay();
 
@@ -117,6 +122,10 @@ export class TimerUI {
 
       case TimerAction.Continue:
         scheduleNextStep(this.onTimerIteration.bind(this));
+    }
+
+    for (const point of points) {
+      speak(point.text);
     }
   }
 
@@ -227,6 +236,16 @@ async function beep(times: number = 2) {
       await playSound(audio);
     }
   }
+}
+
+async function speak(text: string) {
+  if (!window.SpeechSynthesisUtterance || !window.speechSynthesis) {
+    return;
+  }
+
+  let utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  window.speechSynthesis.speak(utterance);
 }
 
 function parseInput(value: string): { parsed: number, success: true } | { parsed: undefined, success: false } {
