@@ -4,6 +4,11 @@ import { TimeCounter, TimerAction } from "./TimeCounter";
 export class TimerUI {
   public constructor() {
     this.counter = new TimeCounter();
+    this.counter.addNotifyPoint(1000 * 30, "30 seconds left");
+    this.counter.addNotifyPoint(1000 * 60, "1 minute left");
+    this.counter.addNotifyPoint(1000 * 60 * 5, "5 minutes left");
+    this.counter.addNotifyPoint(1000 * 60 * 10, "10 minutes left");
+    this.counter.addNotifyPoint(1000 * 60 * 30, "30 minutes left");
 
     window.onbeforeunload = this.onBeforeUnload.bind(this);
   }
@@ -91,6 +96,16 @@ export async function beep(times: number = 2) {
       await playSound(audio);
     }
   }
+}
+
+export async function speak(text: string) {
+  if (!window.SpeechSynthesisUtterance || !window.speechSynthesis) {
+    return;
+  }
+
+  let utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  window.speechSynthesis.speak(utterance);
 }
 
 export function parseInput(value: string): { parsed: number, success: true } | { parsed: undefined, success: false } {

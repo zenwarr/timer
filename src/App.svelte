@@ -3,7 +3,7 @@
   import ThemeSwitcher from "./ThemeSwitcher.svelte";
   import TimeInput from "./TimeInput.svelte";
   import Button from "./Button.svelte";
-  import { beep, parseTemplate, TimerUI, scheduleNextStep, formatTime } from "./TimerUI";
+  import { speak, beep, parseTemplate, TimerUI, scheduleNextStep, formatTime } from "./TimerUI";
   import { TimerAction } from "./TimeCounter";
 
 
@@ -25,7 +25,7 @@
 
 
   function onIteration() {
-    let action = controller.counter.tick();
+    let [action, points] = controller.counter.tick();
     msLeft = controller.counter.msLeft;
 
     switch (action) {
@@ -35,6 +35,10 @@
 
       case TimerAction.Continue:
         scheduleNextStep(onIteration);
+    }
+
+    for (const point of points) {
+      speak(point.text);
     }
   }
 
