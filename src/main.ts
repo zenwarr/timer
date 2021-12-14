@@ -1,6 +1,7 @@
-import { TimerUI } from "./TimerUI";
-import { ThemeManager } from "./Themes";
+import "./style.css";
+import App from "./App.svelte";
 
-
-new ThemeManager();
-new TimerUI();
+const root = document.getElementById("root")!;
+new App({
+  target: root
+});

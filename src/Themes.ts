@@ -4,27 +4,34 @@ const DEFAULT_DARK_THEME = "dark";
 
 const LIGHT_THEME_KEY = "light-theme";
 const DARK_THEME_KEY = "dark-theme";
-const AUTO_THEME = "auto";
+export const AUTO_THEME = "auto";
+
+
+export interface Theme {
+  name: string;
+  title: string;
+  isDark: boolean;
+}
+
+
+export const THEMES: Theme[] = [
+  { name: "dark", title: "Arc Dark", isDark: true },
+  { name: "materia-dark", title: "Materia Dark", isDark: true },
+  { name: "light", title: "Light", isDark: false },
+  { name: "Solarized", title: "Solarized", isDark: false },
+  { name: "Lucky", title: "Lucky", isDark: false }
+];
 
 
 export class ThemeManager {
-  public constructor() {
+  constructor() {
     const savedTheme = localStorage.getItem("theme-selected");
     if (savedTheme === AUTO_THEME || !savedTheme) {
       this.setTheme(this.getCurrentDefaultTheme());
-      this.setThemeSelectorValue(AUTO_THEME);
+      this.isCurrentThemeAuto = true;
     } else {
       this.setTheme(savedTheme);
-      this.setThemeSelectorValue(savedTheme);
-    }
-
-    const themeSelector = document.querySelector("[name=color_theme]");
-    if (themeSelector) {
-      themeSelector.addEventListener("change", event => {
-        if (event.target) {
-          this.onThemeSwitch((event.target as HTMLSelectElement).value);
-        }
-      });
+      this.isCurrentThemeAuto = false;
     }
   }
 
@@ -39,14 +46,7 @@ export class ThemeManager {
     });
 
     document.documentElement.classList.add(`theme--${ themeName }`);
-  }
-
-
-  private setThemeSelectorValue(name: string) {
-    const select = document.querySelector<HTMLSelectElement>("select[name=color_theme]");
-    if (select) {
-      select.value = name;
-    }
+    this.currentThemeName = themeName;
   }
 
 
@@ -59,29 +59,21 @@ export class ThemeManager {
   }
 
 
-  private onThemeSwitch(selectedTheme: string) {
+  onThemeChange(selectedTheme: string) {
     this.setTheme(selectedTheme);
+    this.isCurrentThemeAuto = false;
 
     if (selectedTheme !== AUTO_THEME) {
-      const isSelectedThemeDark = this.isThemeDark(selectedTheme);
-      localStorage.setItem(isSelectedThemeDark ? DARK_THEME_KEY : LIGHT_THEME_KEY, selectedTheme);
+      const theme = THEMES.find(t => t.name === selectedTheme);
+      if (theme) {
+        localStorage.setItem(theme.isDark ? DARK_THEME_KEY : LIGHT_THEME_KEY, selectedTheme);
+      }
     }
 
     localStorage.setItem("theme-selected", selectedTheme);
   }
 
 
-  private isThemeDark(name: string): boolean {
-    const option = document.querySelector<HTMLOptionElement>(`select[name=color_theme] option[value=${ name }]`);
-    if (!option) {
-      throw new Error(`Theme ${ name } not found`);
-    }
-
-    const rawIsDark = option.dataset["isDark"];
-    if (rawIsDark !== "true" && rawIsDark !== "false") {
-      throw new Error(`Configuration for theme ${ name } is invalid: data-is-dark is missing`);
-    }
-
-    return JSON.parse(rawIsDark);
-  }
+  currentThemeName!: string;
+  isCurrentThemeAuto: boolean;
 }

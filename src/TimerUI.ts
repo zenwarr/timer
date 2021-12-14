@@ -1,49 +1,11 @@
 import { TimeCounter, TimerAction } from "./TimeCounter";
 
 
-export const DEFAULT_DURATION = 1000 * 60 * 10;
-
-
 export class TimerUI {
   public constructor() {
-    this.counter = new TimeCounter(DEFAULT_DURATION);
-    this.counter.addNotifyPoint(1000 * 10, "10 seconds left");
-    this.counter.addNotifyPoint(1000 * 30, "30 seconds left");
-    this.counter.addNotifyPoint(1000 * 60, "1 minute left");
-    this.counter.addNotifyPoint(1000 * 60 * 5, "5 minutes left");
-    this.counter.addNotifyPoint(1000 * 60 * 10, "10 minutes left");
-
-    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-    reducedMotion.addEventListener("change", value => {
-      this.reducedMotion = value.matches;
-    })
-    this.reducedMotion = reducedMotion.matches;
-
-    this.input = document.querySelector<HTMLInputElement>("#timer-input")!;
-    this.input.addEventListener("blur", this.applyInputValue.bind(this));
-    this.input.addEventListener("input", this.onInputChange.bind(this));
+    this.counter = new TimeCounter();
 
     window.onbeforeunload = this.onBeforeUnload.bind(this);
-
-    this.updateTimeDisplay();
-
-    document.body.addEventListener("click", e => {
-      let target = e.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-
-      if (target.classList.contains("template-button")) {
-        let template = target.dataset.template;
-        if (template) {
-          this.onChangeTemplate(template);
-        }
-      } else if (target.classList.contains("stop")) {
-        this.onStop();
-      } else if (target.classList.contains("toggle")) {
-        this.onToggle();
-      }
-    });
   }
 
 
@@ -57,125 +19,18 @@ export class TimerUI {
   }
 
 
-  private onInputChange(e: Event) {
-    this.isInputDirty = true;
-  }
+  static instance = new TimerUI();
 
 
-  public applyInputValue() {
-    if (!this.isInputDirty) {
-      return;
-    }
-
-    let { parsed, success } = parseInput(this.input.value);
-    this.setValidationStatus(success);
-    this.isInputDirty = false;
-
-    if (parsed != null) {
-      this.counter.setDuration(parsed);
-      this.updateState();
-    }
-  }
-
-
-  private setValidationStatus(success: boolean) {
-    if (success !== this.isInputValid) {
-      this.isInputValid = success;
-      this.input.classList.toggle("timer-input__time--invalid", !success);
-    }
-  }
-
-
-  public onStop() {
-    this.counter.stop();
-    this.updateTimeDisplay();
-  }
-
-
-  public onToggle() {
-    if (!this.isInputValid) {
-      return;
-    }
-
-    let action = this.counter.toggle();
-    if (action === TimerAction.Continue) {
-      scheduleNextStep(this.onTimerIteration.bind(this));
-    }
-  }
-
-
-  public onChangeTemplate(template: string) {
-    this.counter.setDuration(parseTemplate(template));
-    this.updateTimeDisplay();
-  }
-
-
-  private onTimerIteration() {
-    let [action, points] = this.counter.tick();
-
-    this.updateTimeDisplay();
-
-    switch (action) {
-      case TimerAction.Elapsed:
-        beep();
-        break;
-
-      case TimerAction.Continue:
-        scheduleNextStep(this.onTimerIteration.bind(this));
-    }
-
-    for (const point of points) {
-      speak(point.text);
-    }
-  }
-
-
-  private updateTimeDisplay() {
-    let msLeft = this.counter.msLeft;
-
-    this.input.value = formatTime(this.reducedMotion ? Math.ceil(msLeft / 1000) * 1000 : msLeft);
-    this.isInputDirty = false;
-    this.setValidationStatus(true);
-
-    if (msLeft > 0) {
-      document.title = `${ formatTime(msLeft, false) } - Timer`;
-    } else {
-      document.title = "Timer";
-    }
-
-    this.updateState();
-  }
-
-
-  private updateState() {
-    let toggle = document.querySelector<HTMLButtonElement>(".toggle");
-    if (toggle) {
-      toggle.textContent = this.counter.running ? "Pause" : "Start";
-      toggle.disabled = !this.counter.canToggle;
-    }
-
-    let stop = document.querySelector<HTMLButtonElement>(".stop");
-    if (stop) {
-      stop.disabled = !this.counter.canStop;
-    }
-
-    this.input.readOnly = this.counter.running;
-  }
-
-
-  private readonly input: HTMLInputElement;
-  private readonly counter: TimeCounter;
-  private reducedMotion: boolean;
-  private isInputDirty = false;
-  private isInputValid = true;
+  readonly counter: TimeCounter;
 }
 
 
-function scheduleNextStep(cb: () => void) {
+export function scheduleNextStep(cb: () => void) {
   setTimeout(cb, 10);
 }
 
-function formatTime(ms: number, showMs = true): string {
+export function formatTime(ms: number, showMs = true): string {
   let hours = ("" + Math.floor(ms / (1000 * 60 * 60))).padStart(2, "0");
   let mins = ("" + Math.floor(ms / (1000 * 60) % 60)).padStart(2, "0");
   let sec = ("" + Math.floor(ms / 1000) % 60).padStart(2, "0");
@@ -188,7 +43,7 @@ function formatTime(ms: number, showMs = true): string {
   }
 }
 
-function parseTemplate(template: string): number {
+export function parseTemplate(template: string): number {
   let unit = template.slice(-1);
   let multiplier = 1;
   switch (unit) {
@@ -229,7 +84,7 @@ function playSound(audio: HTMLAudioElement) {
   });
 }
 
-async function beep(times: number = 2) {
+export async function beep(times: number = 2) {
   let audio = document.getElementById("beep-sound");
   if (audio && audio instanceof HTMLAudioElement) {
     for (let q = 0; q < times; ++q) {
@@ -238,17 +93,7 @@ async function beep(times: number = 2) {
   }
 }
 
-async function speak(text: string) {
-  if (!window.SpeechSynthesisUtterance || !window.speechSynthesis) {
-    return;
-  }
-
-  let utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  window.speechSynthesis.speak(utterance);
-}
-
-function parseInput(value: string): { parsed: number, success: true } | { parsed: undefined, success: false } {
+export function parseInput(value: string): { parsed: number, success: true } | { parsed: undefined, success: false } {
   let qsSep = value.indexOf(".");
   if (qsSep < 0) {
     return { parsed: undefined, success: false };

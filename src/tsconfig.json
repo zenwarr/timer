@@ -8,8 +8,6 @@
     "noEmitOnError": true,
     "noImplicitReturns": true,
     "strict": true,
-    "declaration": true,
-    "jsx": "react",
     "lib": [
       "es2015",
       "es2015.promise",

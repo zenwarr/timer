@@ -1,12 +1,12 @@
-export interface NotifyPoint {
-  msLeft: number;
-  text: string;
-  triggered: boolean;
-}
+export const DEFAULT_DURATION = 1000 * 60 * 10;
 
 
 export class TimeCounter {
-  public constructor(msLeft: number) {
+  public constructor(msLeft?: number) {
+    if (!msLeft) {
+      msLeft = DEFAULT_DURATION;
+    }
+
     this.msLeft = msLeft;
     this.lastDuration = msLeft;
   }
@@ -18,16 +18,6 @@ export class TimeCounter {
   public stopRequested = false;
   public pauseRequested = false;
   public lastDuration: number;
-  protected notifyPoints: NotifyPoint[] = [];
-
-
-  public addNotifyPoint(msLeft: number, text: string): void {
-    this.notifyPoints.push({
-      msLeft: msLeft,
-      text: text,
-      triggered: false
-    });
-  }
 
 
   public stop(): void {
@@ -39,9 +29,6 @@ export class TimeCounter {
 
   private reschedule() {
     this.calculatedEnd = performance.now() + this.msLeft;
-    for (const point of this.notifyPoints) {
-      point.triggered = point.msLeft >= this.msLeft;
-    }
   }
 
 
@@ -59,31 +46,23 @@ export class TimeCounter {
   }
 
 
-  public tick(): [TimerAction, NotifyPoint[]] {
+  public tick(): TimerAction {
     let left = Math.max(this.calculatedEnd - performance.now(), 0);
-
-    const triggeredPoints: NotifyPoint[] = [];
-    for (const point of this.notifyPoints) {
-      if (left <= point.msLeft && !point.triggered) {
-        point.triggered = true;
-        triggeredPoints.push(point);
-      }
-    }
 
     if (left <= 0) {
       this.running = false;
       this.msLeft = 0;
-      return [TimerAction.Elapsed, triggeredPoints];
+      return TimerAction.Elapsed;
     } else if (this.stopRequested) {
       this.running = false;
-      return [TimerAction.Stopped, triggeredPoints];
+      return TimerAction.Stopped;
     } else if (this.pauseRequested) {
       this.running = false;
       this.msLeft = left;
-      return [TimerAction.Paused, triggeredPoints];
+      return TimerAction.Paused;
     } else {
       this.msLeft = left;
-      return [TimerAction.Continue, triggeredPoints];
+      return TimerAction.Continue;
     }
   }
 
