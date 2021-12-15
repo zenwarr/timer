@@ -187,6 +187,15 @@ html.theme--materia-dark {
   --control-focus-color: #338dd6;
 }
 
+html.theme--pure-black {
+  --background-color: black;
+  --text-color: #b7b7b7;
+  --control-background-color: #1a1a1a;
+  --control-border-color: #000;
+  --control-selection-color: #000;
+  --control-focus-color: #338dd6;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     --background-color: #383c4a;
