@@ -7,11 +7,11 @@ export const DEFAULT_DURATION = 1000 * 60 * 10;
 export class TimerUI {
   public constructor() {
     this.counter = new TimeCounter(DEFAULT_DURATION);
-    this.counter.addNotifyPoint(1000 * 10, "10 seconds left");
     this.counter.addNotifyPoint(1000 * 30, "30 seconds left");
     this.counter.addNotifyPoint(1000 * 60, "1 minute left");
     this.counter.addNotifyPoint(1000 * 60 * 5, "5 minutes left");
     this.counter.addNotifyPoint(1000 * 60 * 10, "10 minutes left");
+    this.counter.addNotifyPoint(1000 * 60 * 30, "30 minutes left");
 
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     reducedMotion.addEventListener("change", value => {
