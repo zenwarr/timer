@@ -47,6 +47,10 @@ html, body {
   font-family: Share Tech Mono, monospace;
 }
 
+.timer-input__time:focus {
+  outline: none;
+}
+
 .timer-input__time--invalid {
   box-shadow: 0px 1px 16px 0px red;
   border-color: red;
@@ -103,6 +107,10 @@ button::-moz-focus-inner {
   padding: 6px 10px;
   color: var(--text-color);
   text-align: center;
+}
+
+.theme-picker__select:focus {
+  outline: none;
 }
 
 @media (min-width: 500px) {
