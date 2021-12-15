@@ -23,6 +23,8 @@ export class TimerUI {
     this.input.addEventListener("blur", this.applyInputValue.bind(this));
     this.input.addEventListener("input", this.onInputChange.bind(this));
 
+    this.progress = document.querySelector<HTMLDivElement>("#progress-bar")!;
+
     window.onbeforeunload = this.onBeforeUnload.bind(this);
 
     this.updateTimeDisplay();
@@ -137,6 +139,12 @@ export class TimerUI {
     this.isInputDirty = false;
     this.setValidationStatus(true);
 
+    let progress = (msLeft / this.counter.lastDuration) * 100;
+    if (this.reducedMotion) {
+      progress = +progress.toFixed(1);
+    }
+    this.progress.style.width = `${progress}%`;
+
     if (msLeft > 0) {
       document.title = `${ formatTime(msLeft, false) } - Timer`;
     } else {
@@ -164,6 +172,7 @@ export class TimerUI {
 
 
   private readonly input: HTMLInputElement;
+  private readonly progress: HTMLDivElement;
   private readonly counter: TimeCounter;
   private reducedMotion: boolean;
   private isInputDirty = false;

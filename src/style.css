@@ -122,6 +122,26 @@ button::-moz-focus-inner {
   }
 }
 
+/* progress */
+
+#progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 5px;
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+#progress-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: rgba(0, 255, 0, 0.2);
+}
+
 html, html.theme--light {
   --background-color: #d8d8d9;
   --text-color: black;
