@@ -16,12 +16,13 @@ export class TimerUI {
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     reducedMotion.addEventListener("change", value => {
       this.reducedMotion = value.matches;
-    })
+    });
     this.reducedMotion = reducedMotion.matches;
 
     this.input = document.querySelector<HTMLInputElement>("#timer-input")!;
     this.input.addEventListener("blur", this.applyInputValue.bind(this));
     this.input.addEventListener("input", this.onInputChange.bind(this));
+    this.input.addEventListener("keydown", this.onInputKeydown.bind(this));
 
     this.progress = document.querySelector<HTMLDivElement>("#progress-bar")!;
 
@@ -52,7 +53,7 @@ export class TimerUI {
   private onBeforeUnload(e: Event) {
     if (this.counter.canStop) {
       e.preventDefault();
-      return "Please don't"
+      return "Please don't";
     } else {
       return undefined;
     }
@@ -61,6 +62,35 @@ export class TimerUI {
 
   private onInputChange(e: Event) {
     this.isInputDirty = true;
+  }
+
+
+  private onInputKeydown(e: KeyboardEvent) {
+    let delta: number;
+    if (e.key === "ArrowUp") {
+      delta = 1000 * 60;
+    } else if (e.key === "ArrowDown") {
+      delta = -1000 * 60;
+    } else {
+      return;
+    }
+
+    let { parsed, success } = parseInput(this.input.value);
+    if (!success || parsed == null) {
+      return;
+    }
+
+    const savedSelStart = this.input.selectionStart;
+    const savedSelEnd = this.input.selectionEnd;
+
+    let newValue = parsed + delta;
+    this.input.value = formatTime(this.reducedMotion ? Math.ceil(newValue / 1000) * 1000 : newValue);
+    this.isInputDirty = true;
+
+    this.input.selectionStart = savedSelStart;
+    this.input.selectionEnd = savedSelEnd;
+
+    e.preventDefault();
   }
 
 
@@ -113,7 +143,7 @@ export class TimerUI {
 
 
   private onTimerIteration() {
-    let [action, points] = this.counter.tick();
+    let [ action, points ] = this.counter.tick();
 
     this.updateTimeDisplay();
 
@@ -143,7 +173,7 @@ export class TimerUI {
     if (this.reducedMotion) {
       progress = +progress.toFixed(1);
     }
-    this.progress.style.width = `${progress}%`;
+    this.progress.style.width = `${ progress }%`;
 
     if (msLeft > 0) {
       document.title = `${ formatTime(msLeft, false) } - Timer`;
