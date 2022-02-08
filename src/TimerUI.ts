@@ -84,6 +84,10 @@ export class TimerUI {
     const savedSelEnd = this.input.selectionEnd;
 
     let newValue = parsed + delta;
+    if (newValue < 0) {
+      newValue = 0;
+    }
+
     this.input.value = formatTime(this.reducedMotion ? Math.ceil(newValue / 1000) * 1000 : newValue);
     this.isInputDirty = true;
 
