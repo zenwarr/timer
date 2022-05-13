@@ -1,6 +1,4 @@
 .idea
 node_modules
 .npmrc
-dist/style.js
-dist/main.js
-dist/style.css
+dist/**
