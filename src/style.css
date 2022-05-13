@@ -60,6 +60,30 @@ html, body {
   background-color: var(--control-selection-color);
 }
 
+.timer-input__wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer-input__wrapper:before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    pointer-events: none;
+    background-color: var(--text-color);
+  }
+
+  .timer-input--live .timer-input__wrapper:before {
+    background-color: var(--live-color);
+    box-shadow: 0px 0px 2px 2px var(--live-color);
+  }
+}
+
 .template-buttons, .controls {
   margin: 20px 0;
   display: flex;
@@ -157,6 +181,7 @@ html, html.theme--light {
   --control-border-color: #929292;
   --control-selection-color: #929292;
   --control-focus-color: #32bcff;
+  --live-color: red;
 }
 
 html.theme--dark {
@@ -166,6 +191,7 @@ html.theme--dark {
   --control-border-color: black;
   --control-selection-color: black;
   --control-focus-color: #929292;
+  --live-color: red;
 }
 
 html.theme--solarized {
@@ -175,6 +201,7 @@ html.theme--solarized {
   --control-border-color: #657b83;
   --control-selection-color: #7dc4be;
   --control-focus-color: #2aa198;
+  --live-color: red;
 }
 
 html.theme--lucky {
@@ -184,6 +211,7 @@ html.theme--lucky {
   --control-border-color: #6b6b6b;
   --control-selection-color: #62798f;
   --control-focus-color: #62798f;
+  --live-color: red;
 }
 
 html.theme--materia-dark {
@@ -193,6 +221,7 @@ html.theme--materia-dark {
   --control-border-color: #000;
   --control-selection-color: #000;
   --control-focus-color: #338dd6;
+  --live-color: red;
 }
 
 html.theme--pure-black {
@@ -202,6 +231,7 @@ html.theme--pure-black {
   --control-border-color: #000;
   --control-selection-color: #000;
   --control-focus-color: #338dd6;
+  --live-color: red;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -212,5 +242,6 @@ html.theme--pure-black {
     --control-border-color: black;
     --control-selection-color: black;
     --control-focus-color: #929292;
+    --live-color: red;
   }
 }

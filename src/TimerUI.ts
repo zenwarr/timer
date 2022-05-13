@@ -24,6 +24,8 @@ export class TimerUI {
     this.input.addEventListener("input", this.onInputChange.bind(this));
     this.input.addEventListener("keydown", this.onInputKeydown.bind(this));
 
+    this.inputContainer = document.querySelector<HTMLDivElement>(".timer-input")!;
+
     this.progress = document.querySelector<HTMLDivElement>("#progress-bar")!;
 
     window.onbeforeunload = this.onBeforeUnload.bind(this);
@@ -202,10 +204,13 @@ export class TimerUI {
     }
 
     this.input.readOnly = this.counter.running;
+
+    this.inputContainer.classList.toggle("timer-input--live", this.counter.running);
   }
 
 
   private readonly input: HTMLInputElement;
+  private readonly inputContainer: HTMLDivElement;
   private readonly progress: HTMLDivElement;
   private readonly counter: TimeCounter;
   private reducedMotion: boolean;
