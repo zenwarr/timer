@@ -9,7 +9,7 @@ export default [
   {
     input: 'src/main.ts',
     output: {
-      dir: 'docs',
+      dir: 'dist',
       format: 'cjs'
     },
     plugins: [
@@ -25,7 +25,7 @@ export default [
   {
     input: 'src/style.css',
     output: {
-      dir: "docs"
+      dir: "dist"
     },
     plugins: [
       postcss({
