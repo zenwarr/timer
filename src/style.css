@@ -43,6 +43,7 @@ html, body {
   width: 100%;
   background: var(--control-background-color);
   border: 1px solid var(--control-border-color);
+  border-radius: var(--control-border-radius);
   color: var(--text-color);
   font-family: Share Tech Mono, monospace;
 }
@@ -101,6 +102,7 @@ button {
   border: 1px solid var(--control-border-color);
   padding: 10px 15px;
   color: var(--text-color);
+  border-radius: var(--control-border-radius);
 }
 
 button:disabled {
@@ -116,6 +118,12 @@ button::-moz-focus-inner {
   border: 0;
 }
 
+button.primary-active {
+  background: var(--control-primary-background-color, var(--control-background-color));
+  color: var(--control-primary-text-color, var(--text-color));
+  font-weight: bold;
+}
+
 .theme-picker {
   position: absolute;
   right: 40px;
@@ -127,6 +135,7 @@ button::-moz-focus-inner {
 .theme-picker__select {
   background: var(--control-background-color);
   border: 1px solid var(--control-border-color);
+  border-radius: var(--control-border-radius);
   appearance: none;
   padding: 6px 10px;
   color: var(--text-color);
@@ -181,6 +190,7 @@ html, html.theme--light {
   --control-border-color: #929292;
   --control-selection-color: #929292;
   --control-focus-color: #32bcff;
+  --control-border-radius: 0;
   --live-color: red;
 }
 
@@ -191,6 +201,7 @@ html.theme--dark {
   --control-border-color: black;
   --control-selection-color: black;
   --control-focus-color: #929292;
+  --control-border-radius: 0;
   --live-color: red;
 }
 
@@ -201,6 +212,7 @@ html.theme--solarized {
   --control-border-color: #657b83;
   --control-selection-color: #7dc4be;
   --control-focus-color: #2aa198;
+  --control-border-radius: 0;
   --live-color: red;
 }
 
@@ -211,6 +223,7 @@ html.theme--lucky {
   --control-border-color: #6b6b6b;
   --control-selection-color: #62798f;
   --control-focus-color: #62798f;
+  --control-border-radius: 0;
   --live-color: red;
 }
 
@@ -221,6 +234,7 @@ html.theme--materia-dark {
   --control-border-color: #000;
   --control-selection-color: #000;
   --control-focus-color: #338dd6;
+  --control-border-radius: 0;
   --live-color: red;
 }
 
@@ -231,6 +245,20 @@ html.theme--pure-black {
   --control-border-color: #000;
   --control-selection-color: #000;
   --control-focus-color: #338dd6;
+  --control-border-radius: 0;
+  --live-color: red;
+}
+
+html.theme--github-light {
+  --background-color: #ffffff;
+  --text-color: #24292f;
+  --control-background-color: #f6f8fa;
+  --control-border-color: #1b1f2426;
+  --control-selection-color: #d6d6d6;
+  --control-focus-color: #338dd6;
+  --control-border-radius: 6px;
+  --control-primary-background-color: #2da44e;
+  --control-primary-text-color: white;
   --live-color: red;
 }
 
@@ -242,6 +270,7 @@ html.theme--pure-black {
     --control-border-color: black;
     --control-selection-color: black;
     --control-focus-color: #929292;
+    --control-border-radius: 0;
     --live-color: red;
   }
 }

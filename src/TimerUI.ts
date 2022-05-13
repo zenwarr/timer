@@ -196,6 +196,7 @@ export class TimerUI {
     if (toggle) {
       toggle.textContent = this.counter.running ? "Pause" : "Start";
       toggle.disabled = !this.counter.canToggle;
+      toggle.classList.toggle("primary-active", this.counter.canToggle && !this.counter.running);
     }
 
     let stop = document.querySelector<HTMLButtonElement>(".stop");
