@@ -20,11 +20,12 @@ jobs:
         with:
           cmd: install
 
-      - uses: borales/actions-yarn@v2.3.0
         with:
           cmd: build
 
       - uses: peaceiris/actions-gh-pages@v3
+        permissions:
+          contents: write
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
