@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "NodeNext",
     "moduleResolution": "node",
     "target": "es2017",
     "esModuleInterop": false,
@@ -9,8 +9,7 @@
     "strict": true,
     "jsx": "react",
     "lib": [
-      "es2015",
-      "es2015.promise",
+      "ES2017",
       "dom"
     ]
   },

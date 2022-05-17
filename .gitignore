@@ -1,4 +1,13 @@
 .idea
+.vscode
 node_modules
 .npmrc
 dist/**
+
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
