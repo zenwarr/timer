@@ -8,7 +8,7 @@ const MAX_DURATION = 1000 * 60 * 60 * 60 - 10;
 
 
 export class TimerUI {
-  public constructor() {
+  constructor() {
     this.counter = new TimeCounter(DEFAULT_DURATION);
     this.counter.addNotifyPoint(1000 * 30, "30 seconds left");
     this.counter.addNotifyPoint(1000 * 60, "1 minute left");
@@ -108,7 +108,7 @@ export class TimerUI {
   }
 
 
-  public applyInputValue() {
+  applyInputValue() {
     if (!this.isInputDirty) {
       return;
     }
@@ -132,13 +132,13 @@ export class TimerUI {
   }
 
 
-  public onStop() {
+  onStop() {
     this.counter.stop();
     this.updateTimeDisplay();
   }
 
 
-  public onToggle() {
+  onToggle() {
     if (!this.isInputValid) {
       return;
     }
@@ -150,13 +150,13 @@ export class TimerUI {
   }
 
 
-  public onChangeTemplate(template: string) {
+  onChangeTemplate(template: string) {
     this.counter.setDuration(parseTemplate(template));
     this.updateTimeDisplay();
   }
 
 
-  public onIncTemplate(template: string) {
+  onIncTemplate(template: string) {
     const newDuration = this.counter.msLeft + parseTemplate(template);
     if (newDuration > MAX_DURATION) {
       return;
