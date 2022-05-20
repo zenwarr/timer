@@ -19,7 +19,8 @@ jobs:
         with:
           version: 7.1.2
 
-      - run: |
+      - id: pnpm-cache
+        run: |
           echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
 
       - uses: actions/cache@v3
