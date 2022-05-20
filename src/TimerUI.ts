@@ -3,6 +3,9 @@ import { TimeCounter, TimerAction } from "./TimeCounter";
 
 export const DEFAULT_DURATION = 1000 * 60 * 10;
 
+// 60h - 10ms
+const MAX_DURATION = 1000 * 60 * 60 * 60 - 10;
+
 
 export class TimerUI {
   public constructor() {
@@ -38,10 +41,15 @@ export class TimerUI {
         return;
       }
 
-      if (target.classList.contains("template-button")) {
-        let template = target.dataset.template;
+      if (target.classList.contains("template-button__set")) {
+        let template = target.parentElement!.dataset.template;
         if (template) {
           this.onChangeTemplate(template);
+        }
+      } else if (target.classList.contains("template-button__inc")) {
+        let template = target.parentElement!.dataset.template;
+        if (template) {
+          this.onIncTemplate(template);
         }
       } else if (target.classList.contains("stop")) {
         this.onStop();
@@ -144,6 +152,17 @@ export class TimerUI {
 
   public onChangeTemplate(template: string) {
     this.counter.setDuration(parseTemplate(template));
+    this.updateTimeDisplay();
+  }
+
+
+  public onIncTemplate(template: string) {
+    const newDuration = this.counter.msLeft + parseTemplate(template);
+    if (newDuration > MAX_DURATION) {
+      return;
+    }
+
+    this.counter.setDuration(newDuration);
     this.updateTimeDisplay();
   }
 

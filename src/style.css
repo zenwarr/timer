@@ -94,7 +94,15 @@ html, body {
 
 .template-buttons__button, .controls__button {
   margin: 5px 10px;
-  width: 110px;
+  width: 120px;
+}
+
+.template-button {
+  display: flex;
+}
+
+.template-button__set {
+  flex-grow: 1;
 }
 
 button {
