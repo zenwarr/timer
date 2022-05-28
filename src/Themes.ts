@@ -9,9 +9,19 @@ const AUTO_THEME = "auto";
 
 export class ThemeManager {
   public constructor() {
+    const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
+    this.currentSystemThemeIsDark = mediaQuery.matches;
+    mediaQuery.addEventListener("change", value => {
+      this.currentSystemThemeIsDark = value.matches;
+      console.log(this.currentTheme);
+      if (this.currentTheme === AUTO_THEME) {
+        this.setTheme(AUTO_THEME);
+      }
+    });
+
     const savedTheme = localStorage.getItem("theme-selected");
     if (savedTheme === AUTO_THEME || !savedTheme) {
-      this.setTheme(this.getCurrentDefaultTheme());
+      this.setTheme(AUTO_THEME);
       this.setThemeSelectorValue(AUTO_THEME);
     } else {
       this.setTheme(savedTheme);
@@ -29,6 +39,10 @@ export class ThemeManager {
   }
 
 
+  private currentSystemThemeIsDark: boolean;
+  private currentTheme!: string;
+
+
   private setTheme(name: string) {
     const themeName = name === AUTO_THEME ? this.getCurrentDefaultTheme() : name;
 
@@ -39,6 +53,7 @@ export class ThemeManager {
     });
 
     document.documentElement.classList.add(`theme--${ themeName }`);
+    this.currentTheme = name;
   }
 
 
@@ -53,9 +68,7 @@ export class ThemeManager {
   private getCurrentDefaultTheme(): string {
     const lightTheme = localStorage.getItem(LIGHT_THEME_KEY) || DEFAULT_LIGHT_THEME;
     const darkTheme = localStorage.getItem(DARK_THEME_KEY) || DEFAULT_DARK_THEME;
-
-    const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
-    return mediaQuery.matches ? darkTheme : lightTheme;
+    return this.currentSystemThemeIsDark ? darkTheme : lightTheme;
   }
 
 
