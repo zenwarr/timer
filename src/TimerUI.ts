@@ -307,7 +307,10 @@ async function beep(times: number = 2) {
 }
 
 async function speak(text: string) {
-  if (!window.SpeechSynthesisUtterance || !window.speechSynthesis) {
+  if (!window.SpeechSynthesisUtterance || !window.speechSynthesis || speechSynthesis.getVoices().length === 0) {
+    const audio = document.createElement("audio");
+    audio.src = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=` + encodeURIComponent(text);
+    await playSound(audio);
     return;
   }
 
