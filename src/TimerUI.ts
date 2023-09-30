@@ -1,4 +1,5 @@
 import { TimeCounter, TimerAction } from "./TimeCounter";
+import {beep, VoiceNotifier} from "./sound";
 
 
 export const DEFAULT_DURATION = 1000 * 60 * 10;
@@ -7,14 +8,25 @@ export const DEFAULT_DURATION = 1000 * 60 * 10;
 const MAX_DURATION = 1000 * 60 * 60 * 60 - 10;
 
 
+const NOTIFY_POINTS: [ number, string, string ][] = [
+    [ 1000 * 30, "30 seconds left", "30s" ],
+    [ 1000 * 60, "1 minute left", "1m" ],
+    [ 1000 * 60 * 5, "5 minutes left", "5m" ],
+    [ 1000 * 60 * 10, "10 minutes left", "10m" ],
+    [ 1000 * 60 * 30, "30 minutes left", "30m" ],
+];
+
+
 export class TimerUI {
-  constructor() {
+  constructor(voiceNotifier: VoiceNotifier) {
+    this.voiceNotifier = voiceNotifier;
+
     this.counter = new TimeCounter(DEFAULT_DURATION);
-    this.counter.addNotifyPoint(1000 * 30, "30 seconds left");
-    this.counter.addNotifyPoint(1000 * 60, "1 minute left");
-    this.counter.addNotifyPoint(1000 * 60 * 5, "5 minutes left");
-    this.counter.addNotifyPoint(1000 * 60 * 10, "10 minutes left");
-    this.counter.addNotifyPoint(1000 * 60 * 30, "30 minutes left");
+    for (const point of NOTIFY_POINTS) {
+      const id = this.voiceNotifier.prepareNotification(point[1], `voice/${point[2]}.mp3`);
+      this.counter.addNotifyPoint(point[0], id);
+
+    }
 
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     reducedMotion.addEventListener("change", value => {
@@ -182,7 +194,7 @@ export class TimerUI {
     }
 
     for (const point of points) {
-      speak(point.text);
+      this.voiceNotifier.notifyByID(point.pointID);
     }
   }
 
@@ -233,6 +245,7 @@ export class TimerUI {
   private readonly inputContainer: HTMLDivElement;
   private readonly progress: HTMLDivElement;
   private readonly counter: TimeCounter;
+  private readonly voiceNotifier: VoiceNotifier;
   private reducedMotion: boolean;
   private isInputDirty = false;
   private isInputValid = true;
@@ -279,44 +292,6 @@ function parseTemplate(template: string): number {
   }
 
   return value * multiplier;
-}
-
-function playSound(audio: HTMLAudioElement) {
-  return new Promise<void>((resolve, reject) => {
-    function onEnd() {
-      audio.removeEventListener("ended", onEnd);
-      resolve();
-    }
-
-    audio.addEventListener("ended", onEnd);
-
-    audio.play().catch(error => {
-      removeEventListener("ended", onEnd);
-      reject(error);
-    });
-  });
-}
-
-async function beep(times: number = 2) {
-  let audio = document.getElementById("beep-sound");
-  if (audio && audio instanceof HTMLAudioElement) {
-    for (let q = 0; q < times; ++q) {
-      await playSound(audio);
-    }
-  }
-}
-
-async function speak(text: string) {
-  if (!window.SpeechSynthesisUtterance || !window.speechSynthesis || speechSynthesis.getVoices().length === 0) {
-    const audio = document.createElement("audio");
-    audio.src = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=` + encodeURIComponent(text);
-    await playSound(audio);
-    return;
-  }
-
-  let utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  window.speechSynthesis.speak(utterance);
 }
 
 function parseInput(value: string): { parsed: number, success: true } | { parsed: undefined, success: false } {

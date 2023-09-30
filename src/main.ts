@@ -1,6 +1,7 @@
-import { TimerUI } from "./TimerUI";
-import { ThemeManager } from "./Themes";
+import {TimerUI} from "./TimerUI";
+import {ThemeManager} from "./Themes";
+import {VoiceNotifier} from "./sound";
 
 
 new ThemeManager();
-new TimerUI();
+new TimerUI(new VoiceNotifier());

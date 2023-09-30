@@ -1,6 +1,6 @@
 export interface NotifyPoint {
   msLeft: number;
-  text: string;
+  pointID: string;
   triggered: boolean;
 }
 
@@ -21,10 +21,10 @@ export class TimeCounter {
   protected notifyPoints: NotifyPoint[] = [];
 
 
-  public addNotifyPoint(msLeft: number, text: string): void {
+  public addNotifyPoint(msLeft: number, pointID: string): void {
     this.notifyPoints.push({
       msLeft: msLeft,
-      text: text,
+      pointID: pointID,
       triggered: false
     });
   }
