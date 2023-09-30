@@ -1,4 +1,4 @@
-Minimalist client-side countdown timer with sound alert and voice notifications.
+Overly minimalist client-side countdown timer with sound alert and voice notifications.
 
 ![Interface](timer.png)
 
